@@ -20,7 +20,9 @@
 
 		if (latlng) {
 			coords = latlng;
-			request = 'http://api.geonames.org/astergdemJSON?lat=' + latlng.y + '&lng=' + latlng.x + '&username=geodivagar&callback=showAltitude'; 		
+			lat=latlng.lat();
+			lng=latlng.lng();
+			request = 'http://api.geonames.org/astergdemJSON?lat=' + lat + '&lng=' + lng + '&username=geodivagar&callback=showAltitude'; 		
 			aObj = new JSONscriptRequest(request);
 			aObj.buildScriptTag();
 			aObj.addScriptTag();			
