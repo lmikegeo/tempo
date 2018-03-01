@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>ArcGISOnline</title>
+	<style type="text/css">
+      html, body, #map_canvas {
+          width: 100%;
+          height: 100%;
+          margin: 0;
+      }
+    </style>
+	<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>
+	<script type="text/javascript" src="arcgislink.js"></script>
+	<script type="text/javascript">
+
+function init() {
+  var services = {
+    'Streets': ['World_Street_Map'],
+    'World Topo': ['World_Topo_Map'],
+    'Imagery': ['World_Imagery'],
+    'Labeled Imagery': ['World_Imagery', 'Reference/World_Boundaries_and_Places'],
+    'Terrain': ['World_Terrain_Base'],
+    'Labeled Terrain': ['World_Terrain_Base', 'Reference/World_Reference_Overlay']
+  };
+  var agsIds = [];//[google.maps.MapTypeId.ROADMAP];
+  var agsTypes = [];
+  for (var x in services) {
+    if (services.hasOwnProperty(x)) {
+      agsIds.push(x);
+      var urls = services[x];
+      for (var i = 0; i < urls.length; i++) {
+        urls[i] = 'http://services.arcgisonline.com/ArcGIS/rest/services/' + urls[i] + '/MapServer';
+      }
+      var opts = {
+        name: x
+      };
+      if (x.indexOf('Imagery') != -1) {
+        opts.negative = true;
+      }
+      agsTypes.push(new gmaps.ags.MapType(urls, opts));
+    }
+  }
+  var myOptions = {
+    zoom: 8,
+    center: new google.maps.LatLng(39.0, -8.0),
+    mapTypeId: 'World Topo',//google.maps.MapTypeId.ROADMAP,
+    mapTypeControlOptions: {
+      mapTypeIds: agsIds
+    }
+  }
+  var map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
+  for (var i = 1; i < agsIds.length; i++) {
+    map.mapTypes.set(agsIds[i], agsTypes[i-1]);
+  }
+  var cp = new gmaps.ags.CopyrightControl(map);
+  map.setMapTypeId('World Topo');
+  
+}
+
+window.onload = init;
+
+    </script>
+  </head>
+  <body >
+    <div id="map_canvas" ></div> 
+  </body>
+</html>

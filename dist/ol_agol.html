@@ -1,0 +1,61 @@
+<html>
+  <head>
+    <title>OpenLayers ArcGIS REST Mercator</title>
+    <style type="text/css">
+      html, body, #basicMap {
+          width: 100%;
+          height: 100%;
+          margin: 0;
+      }
+    </style>
+    <script src="http://www.openlayers.org/api/2.8/OpenLayers.js"></script>
+    <script>
+	  var map;
+	  var topoLayer,imageLayer,streetLayer;
+	  
+      //OpenLayers.IMAGE_RELOAD_ATTEMPTS = 3;
+      //OpenLayers.Util.onImageLoadErrorColor = "transparent";
+
+      function init() {
+
+		var options = {
+			projection: new OpenLayers.Projection("EPSG:900913"),
+			displayProjection: new OpenLayers.Projection("EPSG:4326"),
+			units: "m",
+			numZoomLevels: 18,
+			maxResolution: 156543.0339,
+			maxExtent: new OpenLayers.Bounds(-20037508, -20037508,
+                                                 20037508, 20037508.34)
+		};
+	  
+        map = new OpenLayers.Map("basicMap", options);
+		
+		topoLayer = new OpenLayers.Layer.ArcGIS93Rest( "World_Topo_Map",
+            "http://services.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/export", 
+            {layers: "0", transparent: true},
+			{isBaseLayer: true, visibility: true}
+		);
+			
+		imageLayer = new OpenLayers.Layer.ArcGIS93Rest( "World Imagery",
+            "http://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/export", 
+            {layers: "show:0,1,2,3", transparent: true}, 
+			{isBaseLayer: true, visibility: true}
+		);
+			
+        streetLayer = new OpenLayers.Layer.ArcGIS93Rest( "World Street Map",
+            "http://services.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/export",
+            {layers: "0", transparent: false},
+			{isBaseLayer: true, visibility: true}
+		);
+
+        map.addLayers([topoLayer,imageLayer,streetLayer]);
+		map.addControl(new OpenLayers.Control.LayerSwitcher());
+        map.setCenter(new OpenLayers.LonLat(-8,39).transform( new OpenLayers.Projection("EPSG:4326"), 
+						new OpenLayers.Projection("EPSG:900913")),8);
+      }
+    </script>
+  </head>
+  <body onload="init();">
+    <div id="basicMap"></div>
+  </body>
+</html>
