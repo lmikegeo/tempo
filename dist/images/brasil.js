@@ -1,18 +1,18 @@
 	window.onload=initialize;
-    var map;
+    var map_canvas;
 	var altitude;
 	var coords;
 	var llGrat;
 
     function initialize() {
       if (GBrowserIsCompatible()) {
-        map = new GMap2(document.getElementById('map_canvas')); 
-		map.setMapType(G_PHYSICAL_MAP);
-        map.setCenter(new GLatLng(-10.333333,-53.200000), 4);
-        map.setUIToDefault();
+        map_canvas = new GMap2(document.getElementById('map_canvas')); 
+		map_canvas.setMapType(G_PHYSICAL_MAP);
+        map_canvas.setCenter(new GLatLng(-10.333333,-53.200000), 4);
+        map_canvas.setUIToDefault();
 		GEvent.addListener(map, 'click', onMapClick);
 		llGrat = new LatLonGraticule(false);
-		map.addOverlay(llGrat);
+		map_canvas.addOverlay(llGrat);
       }
     } 
 
@@ -31,5 +31,5 @@
 			altitude = jData.astergdem;
 			if (altitude==-9999) {altitude=0;}
 			var myHtml = 'Coords: ' + coords + '<br />  Altitude: ' + altitude + ' metros';
-            map.openInfoWindow(coords, myHtml);
+            map_canvas.openInfoWindow(coords, myHtml);
 	}
