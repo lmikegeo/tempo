@@ -2,7 +2,6 @@
     var map_canvas;
 	var altitude;
 	var coords;
-	var llGrat;
 
     function initialize() {
       if (GBrowserIsCompatible()) {
@@ -11,8 +10,6 @@
         map_canvas.setCenter(new GLatLng(-10.333333,-53.200000), 4);
         map_canvas.setUIToDefault();
 		GEvent.addListener(map, 'click', onMapClick);
-		llGrat = new LatLonGraticule(false);
-		map_canvas.addOverlay(llGrat);
       }
     } 
 
