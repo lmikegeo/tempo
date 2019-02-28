@@ -1,34 +1,41 @@
 	window.onload=initialize;
-    var map_canvas;
-	var altitude;
-	var coords;
+    var map;
 
-    function initialize() {
-      if (GBrowserIsCompatible()) {
-        map_canvas = new GMap2(document.getElementById('map_canvas')); 
-		map_canvas.setMapType(G_PHYSICAL_MAP);
-        map_canvas.setCenter(new GLatLng(-10.333333,-53.200000), 4);
-        map_canvas.setUIToDefault();
-		GEvent.addListener(map, 'click', onMapClick);
+      function initMap() {
+        var map = new google.maps.Map(document.getElementById('map'), {
+          zoom: 4,
+          center: {lat: -10.333333, lng: -53.200000}, 
+          mapTypeId: 'terrain',
+		  streetViewControl: false
+        });
+        var elevator = new google.maps.ElevationService;
+        var infowindow = new google.maps.InfoWindow({map: map});
+
+        // Add a listener for the click event. Display the elevation for the LatLng of
+        // the click inside the infowindow.
+        map.addListener('click', function(event) {
+          displayLocationElevation(event.latLng, elevator, infowindow);
+        });
       }
-    } 
 
-    function onMapClick(overlay,latlng) {
-
-		if (latlng) {
-			coords = latlng;
-			lat=latlng.lat();
-			lng=latlng.lng();
-			request = 'http://api.geonames.org/astergdemJSON?lat=' + lat + '&lng=' + lng + '&username=geodivagar&callback=showAltitude'; 		
-			aObj = new JSONscriptRequest(request);
-			aObj.buildScriptTag();
-			aObj.addScriptTag();			
-        }
-    }
-		
-	function showAltitude(jData) {
-			altitude = jData.astergdem;
-			if (altitude==-9999) {altitude=0;}
-			var myHtml = 'Coords: ' + coords + '<br />  Altitude: ' + altitude + ' metros';
-            map_canvas.openInfoWindow(coords, myHtml);
-	}
+      function displayLocationElevation(location, elevator, infowindow) {
+        // Initiate the location request
+        elevator.getElevationForLocations({
+          'locations': [location]
+        }, function(results, status) {
+          infowindow.setPosition(location);
+          if (status === 'OK') {
+            // Retrieve the first result
+            if (results[0]) {
+              // Open the infowindow indicating the elevation at the clicked position.
+              infowindow.setContent('The elevation at this point <br>is ' +
+                  results[0].elevation + ' meters.');
+            } else {
+              infowindow.setContent('No results found');
+            }
+          } else {
+            infowindow.setContent('Elevation service failed due to: ' + status);
+          }
+        });
+      }
+	  
